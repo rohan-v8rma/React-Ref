@@ -2,19 +2,14 @@ import logo from './logo.svg';
 import AppStyles from './App.module.css';
 
 function App(props) {
-  if(props.lightthemebinary === true) {
-    return (
-      <div className={`${AppStyles.common} ${AppStyles.lighttheme}`}>
-        hehehehehehehehhe
-      </div>
-    ); 
-  }
   
   return (
-    <div className={`${AppStyles.common} ${AppStyles.darktheme}`}>
+    <div className={`${AppStyles.common} ` 
+    +  (props.lightthemebinary ? `${AppStyles.lighttheme}` : `${AppStyles.darktheme}`) }>
       hehehehehehehehhe
     </div>
-  );
+  )
+  
   // return ( 
   // <div className={`${AppStyles.app}`}>
   //   <header className={`${AppStyles.appheader}`}>
