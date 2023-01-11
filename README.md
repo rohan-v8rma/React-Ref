@@ -17,6 +17,8 @@
 - [Important Concepts](#important-concepts)
   - [Are the `node_modules` that we use for local development, also used in browser?](#are-the-node_modules-that-we-use-for-local-development-also-used-in-browser)
   - [Configuring React build process](#configuring-react-build-process)
+  - [`--isolatedModules` error in React, when using TypeScript](#--isolatedmodules-error-in-react-when-using-typescript)
+    - [Using `import` and `export` keywords to fix the error](#using-import-and-export-keywords-to-fix-the-error)
   - [Reconciliation](#reconciliation)
   - [Server Side Rendering](#server-side-rendering)
     - [1. Improved SEO](#1-improved-seo)
@@ -347,6 +349,58 @@ module.exports = {
   ]
 };
 ```
+
+## `--isolatedModules` error in React, when using TypeScript
+
+The `--isolatedModules` error in React is related to the TypeScript compiler. This error occurs when the TypeScript compiler is unable to find a specific module that is being imported.
+
+The issue can be fixed by importing any module, because this tells the TypeScript compiler that the current file should be treated as a module and not as a script.
+
+In particular, it happens when the file does not have any exports, then `--isolatedModules` flag will break it, because it will consider it as a script. By adding import statement it tells TS compiler that this is actually a module and we have to treat it differently.
+
+As a best practice is to have at least one import statement in your file, even if the imported module is not actually used in the file. This helps to avoid the `--isolatedModules` error and ensure that your TypeScript code is correctly transpiled to JavaScript.
+
+### Using `import` and `export` keywords to fix the error
+
+In TypeScript, you can add an empty import statement by using the `import` keyword, followed by a set of curly braces `{}` and a semicolon `;` at the end.
+
+```js
+import {};
+```
+
+You can also specify a name for the import, even though it's not going to be used, this makes it clear for the readers that the `import` statement is being used just to indicate that the current file should be treated as a module and not as a script.
+
+```js
+import { dummy } from "dummy-module";
+```
+
+Similarly, you can add an empty export statement by using the `export` keyword, followed by a set of curly braces `{}` and a semicolon `;` at the end.
+
+```js
+export {};
+```
+
+You can also specify a name for the export, it can make more sense depending on the context of the usage.
+
+```js
+export const dummy = {};
+```
+
+> ***Note***: 
+> - When you use `import` statement, it tells the compiler that this file is going to consume something from other module and it should treat the file as a module.
+>
+> - When you use `export` statement, it tells the compiler that this file is going to expose something that could be used by other files and it should treat the file as a script.
+>
+> - When you use both `import` and `export` statement in a single file, it tells the compiler that this file is both a module and a script. 
+> 
+>   This file is going to consume something from other module and it's also going to expose something that could be used by other files.
+> 
+>   ```js
+>   export {};
+>   import {} from "dummy-module";
+>   ```
+>
+> It's important to note that this approach should only be used as a temporary solution while you're working on your code, and it's considered as a best practice to have meaningful exports and imports in your codebase.
 
 
 ## Reconciliation 
