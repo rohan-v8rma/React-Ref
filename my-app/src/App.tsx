@@ -1,9 +1,8 @@
-import logo from './logo.svg';
 import AppStyles from './App.module.css';
 
 
 // Another way of passing props
-function App({lightthemebinary}) {
+function App(lightthemebinary: boolean) {
 // function App(props) {
   
   return (
