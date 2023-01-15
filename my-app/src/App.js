@@ -1,9 +1,9 @@
 import AppStyles from './App.module.css';
-import Clock from './Clock'
+import Clock from './ClassStatefulComp'
 
 
 // Another way of passing props
-function App({lightthemebinary}) {
+function App() {
 // function App(props) {
   
   return (
