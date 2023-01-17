@@ -12,6 +12,7 @@
   - [Using CSS modules in React](#using-css-modules-in-react)
     - [CSS module loader object](#css-module-loader-object)
     - [Using IDs in `.module.css` files](#using-ids-in-modulecss-files)
+  - [Reconciliation](#reconciliation)
 - [Terminologies in React](#terminologies-in-react)
   - [`props`](#props)
     - [Destructuring `props`](#destructuring-props)
@@ -23,13 +24,15 @@
   - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
   - [Code-snippet demonstrating usage of `setState()`](#code-snippet-demonstrating-usage-of-setstate)
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
+- [Conditional Rendering (using Short-Circuit Operators)](#conditional-rendering-using-short-circuit-operators)
+  - [`&&` operator](#-operator)
+  - [`||` operator](#-operator-1)
 - [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 - [Important Concepts](#important-concepts)
   - [Are the `node_modules` that we use for local development, also used in browser?](#are-the-node_modules-that-we-use-for-local-development-also-used-in-browser)
   - [Configuring React build process](#configuring-react-build-process)
   - [`--isolatedModules` error in React, when using TypeScript](#--isolatedmodules-error-in-react-when-using-typescript)
     - [Using `import` and `export` keywords to fix the error](#using-import-and-export-keywords-to-fix-the-error)
-  - [Reconciliation](#reconciliation)
   - [Server Side Rendering](#server-side-rendering)
     - [1. Improved SEO](#1-improved-seo)
     - [2. Faster initial load time](#2-faster-initial-load-time)
@@ -281,6 +284,26 @@ function Welcome() {
 ```
 
 Take a look at [this](https://www.triplet.fi/blog/practical-guide-to-react-and-css-modules/) practical guide on CSS modules for a more in-depth understanding.
+
+---
+
+## Reconciliation 
+
+---
+<h3>Does using <code>root.render()</code> to render elements overrwrite the pre-existing content within <code>root</code>?</h3>
+
+---
+
+In React, the `root.render()` method is used to render a React component to a specific DOM node. When you call `root.render()`, React will compare the virtual DOM (a representation of the component tree in memory) with the actual DOM, and make any necessary updates to the actual DOM to make it match the virtual DOM.
+
+If the DOM node that you're rendering to is empty (i.e., it doesn't have any children), then `root.render()` will simply append the newly-rendered content to the node. However, if the DOM node already has children, React will update the existing content as needed. This is known as ***reconcilation***.
+
+React will only update the parts of the DOM that have changed, in order to minimize the amount of work that needs to be done. For example, if you update the text inside a `<p>` element, React will only update the text of that element, and not the entire element itself. This helps to make React efficient and fast when updating the user interface.
+
+When you use React, you should not manually update the actual DOM yourself. Instead, you should let React handle updates for you by calling `root.render()` and let it handle the diffing and re-rendering of your components.
+
+
+---
 
 # Terminologies in React
 
@@ -553,6 +576,71 @@ When the button is clicked, the component instance calls the `setCount(count + 1
 
 ---
 
+# Conditional Rendering (using Short-Circuit Operators)
+
+In React, we can use JS short-circuit operators to conditionally render elements based on a condition. 
+
+The short-circuit operators `&&` and `||` can be used to check if a condition is `true` or `false`, and to render different elements accordingly.
+
+---
+
+## `&&` operator
+
+It is used to check if a condition is `true`, and if it is, it will render the element that follows it. 
+    
+If the condition is `false`, the second expression won't be evaluated because 1 `false` statement in the case of AND leads to rejection of the combined condition. 
+  
+Hence, the element will not be rendered and nothing will be displayed in its place.
+
+## `||` operator 
+
+It works in a similar way to the `&&` operator, but it will render the element following it if the condition is `false`.
+
+  If the condition in `true`, the second expression won't be evaluated because 1 `true` statement in the case of OR leads to accepting of the combined condition.
+
+  Hence, the element will not be rendered and nothing will be displayed in its place.
+
+---
+
+Take a look at this code-snippet which uses both the short-circuit operators:
+
+```js
+import React from 'react';
+
+class ConditionalRendering extends React.Component {
+    constructor(pops) {
+        super(pops);
+        this.state = {isLoggedIn : false};
+    }
+
+    handleLoginClick = () => {
+        this.setState({isLoggedIn: true});
+    }
+
+    handleLogoutClick = () => {
+        this.setState({isLoggedIn: false});
+    }
+
+    render() {
+        const isLoggedIn = this.state.isLoggedIn;
+
+        return(
+            <div>
+                {/* If user is logged out, we need to show the login button */}
+                {isLoggedIn || <LoginButton onClick={this.handleLoginClick} />}
+
+                {/* If user is already logged in, we need to show the logout button */}
+                {isLoggedIn && <LogoutButton onClick={this.handleLogoutClick} />}
+            </div>
+        )
+    }
+}
+
+export default ConditionalRendering;
+```
+
+---
+
 # See Edge bookmarks for more resources
 
 # Important Concepts
@@ -676,23 +764,6 @@ export const dummy = {};
 >
 > It's important to note that this approach should only be used as a temporary solution while you're working on your code, and it's considered as a best practice to have meaningful exports and imports in your codebase.
 
-
-## Reconciliation 
-
----
-<h3>Does using <code>root.render()</code> to render elements overrwrite the pre-existing content within <code>root</code>?</h3>
-
-> ***Note***: Courtesy of [ChatGPT](https://chat.openai.com/chat) :)
-
----
-
-In React, the `root.render()` method is used to render a React component to a specific DOM node. When you call `root.render()`, React will compare the virtual DOM (a representation of the component tree in memory) with the actual DOM, and make any necessary updates to the actual DOM to make it match the virtual DOM.
-
-If the DOM node that you're rendering to is empty (i.e., it doesn't have any children), then `root.render()` will simply append the newly-rendered content to the node. However, if the DOM node already has children, React will update the existing content as needed. This is known as ***reconcilation***.
-
-React will only update the parts of the DOM that have changed, in order to minimize the amount of work that needs to be done. For example, if you update the text inside a `<p>` element, React will only update the text of that element, and not the entire element itself. This helps to make React efficient and fast when updating the user interface.
-
-When you use React, you should not manually update the actual DOM yourself. Instead, you should let React handle updates for you by calling `root.render()` and let it handle the diffing and re-rendering of your components.
 
 ## Server Side Rendering 
 

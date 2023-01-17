@@ -1,5 +1,5 @@
 import AppStyles from './App.module.css';
-import ClassBasedStatefulComp from './Components/ClassBasedStatefulComp';
+import ConditionalRenderingExample from './Pages/ConditionalRendering'
 
 
 // Another way of passing props
@@ -7,7 +7,7 @@ function App() {
 // function App(props) {
 
   return (
-    <ClassBasedStatefulComp />
+    <ConditionalRenderingExample />
   )
 }
 
