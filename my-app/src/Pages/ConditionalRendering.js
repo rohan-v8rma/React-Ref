@@ -19,15 +19,21 @@ class ConditionalRendering extends React.Component {
 
     render() {
         const isLoggedIn = this.state.isLoggedIn;
+        let button;
+
+        
+        /* If user is already logged in, we need to show the logout button */
+        if(isLoggedIn) {
+            button = <LogoutButton onClick={this.handleLogoutClick} />;
+        }
+        /* If user is logged out, we need to show the login button */
+        else {
+            button = <LoginButton onClick={this.handleLoginClick} />;
+        }
 
         return(
             <div>
-                {/* If user is logged out, we need to show the login button */}
-                {isLoggedIn || <LoginButton onClick={this.handleLoginClick} />}
-
-                {/* If user is already logged in, we need to show the logout button */}
-                {isLoggedIn && <LogoutButton onClick={this.handleLogoutClick} />}
-
+                {button}
             </div>
         )
     }
