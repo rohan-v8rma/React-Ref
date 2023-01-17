@@ -1,5 +1,5 @@
 import AppStyles from './App.module.css';
-import Clock from './ClassStatefulComp'
+import TwoButtons from './FunctionalStatefulComp';
 
 
 // Another way of passing props
@@ -7,7 +7,7 @@ function App() {
 // function App(props) {
   
   return (
-    <Clock />
+    <TwoButtons />
   )
 }
 

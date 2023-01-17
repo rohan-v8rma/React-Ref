@@ -13,6 +13,10 @@
     - [CSS module loader object](#css-module-loader-object)
     - [Using IDs in `.module.css` files](#using-ids-in-modulecss-files)
 - [Terminologies in React](#terminologies-in-react)
+- [Converting a Function to a Class](#converting-a-function-to-a-class)
+- [State](#state)
+  - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
+  - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
 - [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 - [Important Concepts](#important-concepts)
   - [Are the `node_modules` that we use for local development, also used in browser?](#are-the-node_modules-that-we-use-for-local-development-also-used-in-browser)
@@ -278,6 +282,122 @@ Take a look at [this](https://www.triplet.fi/blog/practical-guide-to-react-and-c
 - `refs` – how you snag data out of the form element we created.
 - `keys` – a way to uniquely identify a component when it’s repeated. We’re repeating comments here (there can be multiple comments), so if we were to have functionality that could change any of them, having a key is what makes React efficient (it can just replace that single comment instead of all of themcreating grid design css
 - ).
+
+# Converting a Function to a Class
+
+A functional component can be converted to class form by following these steps:
+
+1. Create an ES6 class, with the same name, that extends `React.Component`.
+2. Add a single empty method to it called `render()`.
+3. Move the body of the function into the `render()` method.
+4. Replace props with `this.props` in the `render()` body; where `this` points to the object instance of the class being created currently.
+5. Delete the remaining empty function.
+
+Functional form of a component:
+```js
+function Clock(props) {
+  return (
+    <div>
+      <h1>Hello, world!</h1>
+      <h2>It is {props.date.toLocaleTimeString()}.</h2>
+    </div>
+  );
+}
+```
+
+Component in the form of a class:
+```js
+class Clock extends React.Component {
+  // We need not pass `prop` to the `render()` method of this class.
+  render() {
+    return (
+      <div>
+        <h1>Hello, world!</h1>
+
+        {/* We can access `props` using the `this` keyword which refers to the current instance of the class being rendered */}
+        <h2>It is {this.props.date.toLocaleTimeString()}.</h2>
+      </div>
+    );
+  }
+}
+```
+
+Check out edge bookmarks for more details.
+
+# State
+
+## Difference between `setState()` and `useState()`
+
+Both `setState()` and `useState()` are used to update the state of a React component, but they have some key differences:
+
+---
+
+1. `setState()` is a method that is used to update the state of a ***class-based component***. 
+
+    It is called on the component instance, and it takes an *object* or a *function* as an argument. The *object* or *function* passed to `setState()` will be merged with the current state, and the component will re-render with the updated state.
+
+2. `useState()`, on the other hand, is a Hook that allows you to add state to a ***functional component***. 
+
+    It is called at the top level of your component, and it takes an *initial state value* as an argument. 
+    
+    It returns an array with two elements: 
+    - the current state, and; 
+    - a function that can be used to update the state. 
+   
+  You can call `useState()` multiple times to have multiple state variables.
+
+---
+
+Another key difference between the two is that:
+
+-  `setState()` is an ***asynchronous operation*** and the state updates are batched together for performance reasons. 
+
+- `useState()` updates are ***synchronous***, the state updates are immediately reflected in the component re-render.
+
+> ***Note***: `setState()` is only available for class-based components and `useState()` is only for functional components.
+
+## Code-snippet demonstrating usage of `useState()`
+
+```js
+import React from "react";
+import { useState } from "react"; // Since this is a named import, we can use this method directly using its name. Otherwise, we would have had to use React.useState()
+
+function FunctionalStatefulComp() {
+
+    // De-structuring assignment
+    const [count, setCount] = useState(0);
+    const [name, setName] = useState("John"); 
+
+    return (<div>
+        <p>Count: {count}</p>
+        <button onClick={() => setCount(count + 1)}>Increment count</button>
+
+        <p>Name: {name}</p>
+        <button onClick={() => setName("Jane")}>Change name</button>
+    </div>)
+}
+
+export default FunctionalStatefulComp;
+```
+
+In this example, `useState(0)` is called at the top level of the component to initialize the state with a value of 0. It returns an array with two elements: the current state, count and a function setCount that can be used to update the state.
+
+The component renders a `<p>` tag that displays the current count, and a button that increments the count when clicked. 
+
+When the button is clicked, the component instance calls the `setCount(count + 1)` function to update the state and re-renders the component with the new state.
+
+> ***Note***: 
+> 1. As the `count` and `name` variables are declared as `const`, they cannot be reassigned to new values, stored at different memory locations.
+> 
+>     The functions assigned for updating them (`setCount` and `setName` respectively) update the value of the state variable, but they do not *reassign* the variable to a new value. 
+>
+>     They update the value of the variable *in-place*, so the variable remains pointing to the same memory location.
+>     
+>     However, this is NOT possible to do manually using regular JS syntax. Strings and numbers can only be re-assigned to new values, which is why `const` primitives cannot be updated manually.
+>
+> 2. The `useState()` hook can be used multiple times to manage multiple state variables.
+
+---
 
 # See Edge bookmarks for more resources
 
