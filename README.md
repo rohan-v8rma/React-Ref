@@ -13,9 +13,15 @@
     - [CSS module loader object](#css-module-loader-object)
     - [Using IDs in `.module.css` files](#using-ids-in-modulecss-files)
 - [Terminologies in React](#terminologies-in-react)
+  - [`props`](#props)
+    - [Destructuring `props`](#destructuring-props)
+    - [Default values for props, along with destructuring](#default-values-for-props-along-with-destructuring)
+  - [`refs`](#refs)
+  - [`keys`](#keys)
 - [Converting a Function to a Class](#converting-a-function-to-a-class)
 - [State](#state)
   - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
+  - [Code-snippet demonstrating usage of `setState()`](#code-snippet-demonstrating-usage-of-setstate)
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
 - [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 - [Important Concepts](#important-concepts)
@@ -278,9 +284,71 @@ Take a look at [this](https://www.triplet.fi/blog/practical-guide-to-react-and-c
 
 # Terminologies in React
 
-- `props` – a way to pass data between components. They looks like HTML attributes when you send them, and arrive as an object in the form of `this.props`.
-- `refs` – how you snag data out of the form element we created.
-- `keys` – a way to uniquely identify a component when it’s repeated. We’re repeating comments here (there can be multiple comments), so if we were to have functionality that could change any of them, having a key is what makes React efficient (it can just replace that single comment instead of all of themcreating grid design css
+## `props` 
+
+`props` are a way to pass data between components. They look like HTML attributes when you send them, and arrive as an object in the form of `this.props`.
+
+```js
+function MyComponent(props) {
+  return (
+    <div>
+      <p>Name: {props.name}</p>
+      <p>Age: {props.age}</p>
+      <p>Address: {props.address}</p>
+    </div>
+  );
+}
+```
+
+### Destructuring `props`
+
+Destructuring props allows you to extract specific properties from the `props` object passed to a component and assign them to separate variables. This can make the component's code more readable and concise.
+
+Here's an example of how destructuring can be used in a functional component:
+
+```js
+function MyComponent({ name, age, address }) {
+  return (
+    <div>
+      <p>Name: {name}</p>
+      <p>Age: {age}</p>
+      <p>Address: {address}</p>
+    </div>
+  );
+}
+```
+
+In this example, the component receives three props: `name`, `age`, and `address`. Instead of accessing the props using the dot notation (e.g. `props.name`), the component uses destructuring to extract the values of these props and assigns them to separate variables.
+
+### Default values for props, along with destructuring
+
+```js
+function MyComponent({ 
+  name = "Rohan", 
+  age = 25, 
+  address = "India" 
+  }) {
+  return (
+    <div>
+      <p>Name: {name}</p>
+      <p>Age: {age}</p>
+      <p>Address: {address}</p>
+    </div>
+  );
+}
+```
+
+In this example, if the `name`, `age` and `address` prop are not passed to `MyComponent` for the purpose of creating an element; the values Rohan, 25 and India will be used.
+
+---
+
+## `refs` 
+
+`refs` are how you snag data out of the form element we created.
+
+## `keys` 
+
+a way to uniquely identify a component when it’s repeated. We’re repeating comments here (there can be multiple comments), so if we were to have functionality that could change any of them, having a key is what makes React efficient (it can just replace that single comment instead of all of themcreating grid design css
 - ).
 
 # Converting a Function to a Class
@@ -355,6 +423,92 @@ Another key difference between the two is that:
 - `useState()` updates are ***synchronous***, the state updates are immediately reflected in the component re-render.
 
 > ***Note***: `setState()` is only available for class-based components and `useState()` is only for functional components.
+
+## Code-snippet demonstrating usage of `setState()`
+
+```js
+import React from "react";
+
+class ClassBasedStatefulComp extends React.Component {
+
+    // When a ClassBasedStatefulComp component is passed to `root.render()`, React calls the `constructor` method of ClassBasedStatefulComp component. Used to initialize the states.
+    constructor(props) {
+        super(props); // Mandatory for derived classes
+
+        // Using this method of setting the state of a component is only appropriate inside the constructor. `setState()` should be used thereafter.
+        this.state = {
+            name: "John",
+            count: 0,
+            date: new Date()
+        }
+    }
+
+    //! Arrow function needed over here, to preserve the `this` value which points to the current component instance in the global scope of the class.
+    incrementCount = () => {
+
+      // Passing a callback function to setState() since the next state depends on the current state
+      // Read about it here: https://reactjs.org/docs/state-and-lifecycle.html
+      this.setState((state, props) => ({
+        count: state.count + 1,
+      }));
+    }
+
+    //! Arrow function needed over here, to preserve the `this` value which points to the current component instance in the global scope of the class.
+    changeName = () => {
+
+      // Using the regular form of the setState() call since the next state doesn't depend on the current state
+      this.setState({ 
+        name: "Jane" 
+      });
+    }
+
+
+    // This `lifecycle method` is called once the element created using ClassBasedStatefulComp component has been inserted in the DOM. 
+    //? No need for arrow function over here since this is a pre-defined method of class based react components, whose `this` value is automatically tied to the current component instance.
+    componentDidMount() {
+      this.timerID = setInterval(() => this.tick(), 1000);
+    }
+
+
+    // This `lifecycle method` is called if the element created using the ClassBasedStatefulComp component is ever removed from the DOM.
+    //? No need for arrow function over here since this is a pre-defined method of class based react components, whose `this` value is automatically tied to the current component instance.
+    componentWillUnmount = () => {
+      clearInterval(this.timerID);
+    }
+
+    tick = () => {
+        this.setState({
+            date: new Date(),
+        })
+    }
+
+    // The below method is called after `constructor` has been called. React takes a look at the output of the below function and sees what needs to be changed in the React DOM.
+    render() {
+        return (<div>
+            <p>Date: {this.state.date.toString()}</p>
+
+            <p>Count: {this.state.count}</p>
+            {/* Button 1 */}
+            <button onClick={() => this.incrementCount()}>Increment count</button>
+    
+            <p>Name: {this.state.name}</p>
+            {/* Button 2 */}
+            <button onClick={() => {this.changeName()}}>Change name</button>
+
+            {/* Arrow function used in both buttons, to maintain the `this` value from parent, which is the `render()` method. We know that the `this` value in render() points to the current component instance */}
+        </div>)
+    }
+    
+}
+
+export default ClassBasedStatefulComp
+```
+
+In a class-based React component, the `setState()` method is a method of the component instance/rendered-element, and it should be called on `this`, the current instance of the component.
+
+That is the reason why you have to use `this.setState()` instead of just `setState()`; because `this` refers to the current instance of the component, and `setState()` is a method that is defined on the instance. Upon calling it, only that specific instance will be updated.
+
+If you were to call `setState()` without the `this` keyword, it would not refer to the `setState()` method that is defined on the component instance and it would throw an error.
 
 ## Code-snippet demonstrating usage of `useState()`
 
