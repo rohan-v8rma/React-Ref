@@ -24,9 +24,11 @@
   - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
   - [Code-snippet demonstrating usage of `setState()`](#code-snippet-demonstrating-usage-of-setstate)
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
-- [Conditional Rendering (using Short-Circuit Operators)](#conditional-rendering-using-short-circuit-operators)
-  - [`&&` operator](#-operator)
-  - [`||` operator](#-operator-1)
+- [Conditional Rendering](#conditional-rendering)
+  - [Using Short-Circuit Operators](#using-short-circuit-operators)
+    - [`&&` operator](#-operator)
+    - [`||` operator](#-operator-1)
+  - [Using if-else or ternary operators](#using-if-else-or-ternary-operators)
 - [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 - [Important Concepts](#important-concepts)
   - [Are the `node_modules` that we use for local development, also used in browser?](#are-the-node_modules-that-we-use-for-local-development-also-used-in-browser)
@@ -576,7 +578,9 @@ When the button is clicked, the component instance calls the `setCount(count + 1
 
 ---
 
-# Conditional Rendering (using Short-Circuit Operators)
+# Conditional Rendering 
+
+## Using Short-Circuit Operators
 
 In React, we can use JS short-circuit operators to conditionally render elements based on a condition. 
 
@@ -584,7 +588,7 @@ The short-circuit operators `&&` and `||` can be used to check if a condition is
 
 ---
 
-## `&&` operator
+### `&&` operator
 
 It is used to check if a condition is `true`, and if it is, it will render the element that follows it. 
     
@@ -592,7 +596,7 @@ If the condition is `false`, the second expression won't be evaluated because 1 
   
 Hence, the element will not be rendered and nothing will be displayed in its place.
 
-## `||` operator 
+### `||` operator 
 
 It works in a similar way to the `&&` operator, but it will render the element following it if the condition is `false`.
 
@@ -631,6 +635,95 @@ class ConditionalRendering extends React.Component {
 
                 {/* If user is already logged in, we need to show the logout button */}
                 {isLoggedIn && <LogoutButton onClick={this.handleLogoutClick} />}
+            </div>
+        )
+    }
+}
+
+export default ConditionalRendering;
+```
+
+## Using if-else or ternary operators
+
+Although the syntax for short-circuit operators is more compact, using traditional methods such as if-else or ternary operators leads to more comprehendable code in the case of more complex conditions.
+
+Take a look at this code-snippet using if-else, for conditional rendering:
+```js
+import React from 'react';
+
+import LoginButton from "../Components/ConditionalLoginComp";
+import LogoutButton from "../Components/ConditionalLogoutComp";
+
+class ConditionalRendering extends React.Component {
+    constructor(pops) {
+        super(pops);
+        this.state = {isLoggedIn : false};
+    }
+
+    handleLoginClick = () => {
+        this.setState({isLoggedIn: true});
+    }
+
+    handleLogoutClick = () => {
+        this.setState({isLoggedIn: false});
+    }
+
+    render() {
+        const isLoggedIn = this.state.isLoggedIn;
+        let button;
+
+        
+        /* If user is already logged in, we need to show the logout button */
+        if(isLoggedIn) {
+            button = <LogoutButton onClick={this.handleLogoutClick} />;
+        }
+        /* If user is logged out, we need to show the login button */
+        else {
+            button = <LoginButton onClick={this.handleLoginClick} />;
+        }
+
+        return(
+            <div>
+                {button}
+            </div>
+        )
+    }
+}
+
+export default ConditionalRendering;
+```
+
+Take a look at this code-snippet using ternary operator, for conditional rendering:
+
+```js
+import React from 'react';
+
+import LoginButton from "../Components/ConditionalLoginComp";
+import LogoutButton from "../Components/ConditionalLogoutComp";
+
+class ConditionalRendering extends React.Component {
+    constructor(pops) {
+        super(pops);
+        this.state = {isLoggedIn : false};
+    }
+
+    handleLoginClick = () => {
+        this.setState({isLoggedIn: true});
+    }
+
+    handleLogoutClick = () => {
+        this.setState({isLoggedIn: false});
+    }
+
+    render() {
+        const isLoggedIn = this.state.isLoggedIn;
+        const logoutButton = <LogoutButton onClick={this.handleLogoutClick} />;
+        const loginButton = <LoginButton onClick={this.handleLoginClick} />;
+
+        return(
+            <div>
+                {/* If the use is already logged in, we need to show logout button, else we need to show login button. */}
+                {isLoggedIn? logoutButton : loginButton}
             </div>
         )
     }
