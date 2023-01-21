@@ -8,11 +8,11 @@
   - [Exporting](#exporting)
     - [Default Exports](#default-exports)
     - [Named Exports](#named-exports)
-- [Importing](#importing)
-  - [Using CSS modules in React](#using-css-modules-in-react)
+  - [Importing](#importing)
+    - [Using CSS modules in React](#using-css-modules-in-react)
     - [CSS module loader object](#css-module-loader-object)
     - [Using IDs in `.module.css` files](#using-ids-in-modulecss-files)
-  - [Reconciliation](#reconciliation)
+- [Reconciliation](#reconciliation)
 - [Terminologies in React](#terminologies-in-react)
   - [`props`](#props)
     - [Destructuring `props`](#destructuring-props)
@@ -29,6 +29,7 @@
     - [`&&` operator](#-operator)
     - [`||` operator](#-operator-1)
   - [Using if-else or ternary operators](#using-if-else-or-ternary-operators)
+- [Is it ok to use conditional statements inside the `render()` method?](#is-it-ok-to-use-conditional-statements-inside-the-render-method)
 - [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 - [Important Concepts](#important-concepts)
   - [Are the `node_modules` that we use for local development, also used in browser?](#are-the-node_modules-that-we-use-for-local-development-also-used-in-browser)
@@ -163,7 +164,7 @@ In short:
 
 Now that you have learned about exporting, let’s look at importing.
 
-# Importing
+## Importing
 
 Similar to exporting, there are two ways to import.
 
@@ -200,7 +201,7 @@ For example, we are creating a file `app.js`, and we want to use the contents fr
     You will frequently be using these import and export features throughout React.
 
 
-## Using CSS modules in React
+### Using CSS modules in React
 
 Files with names of the format `[name].module.css` are modular CSS files, whose CSS properties are locally scoped. If we `import` them as regular `.css` files and try to use their styles, they won't be applied.
 
@@ -289,9 +290,8 @@ Take a look at [this](https://www.triplet.fi/blog/practical-guide-to-react-and-c
 
 ---
 
-## Reconciliation 
+# Reconciliation 
 
----
 <h3>Does using <code>root.render()</code> to render elements overrwrite the pre-existing content within <code>root</code>?</h3>
 
 ---
@@ -448,8 +448,14 @@ Another key difference between the two is that:
 - `useState()` updates are ***synchronous***, the state updates are immediately reflected in the component re-render.
 
 > ***Note***: `setState()` is only available for class-based components and `useState()` is only for functional components.
+>
+> But, both of these can be used to create state variables whose next value is dependent on their current value. This is done by passing callbacks in a specific format.
+>
+> Check out the implementation in the example usages of [`setState()`](#code-snippet-demonstrating-usage-of-setstate) and [`useState()`](#code-snippet-demonstrating-usage-of-usestate).
 
 ## Code-snippet demonstrating usage of `setState()`
+
+In this, the next state is dependent on the current state, which is implemented by passing a callback to `setState()`.
 
 ```js
 import React from "react";
@@ -537,6 +543,14 @@ If you were to call `setState()` without the `this` keyword, it would not refer 
 
 ## Code-snippet demonstrating usage of `useState()`
 
+1. In this, the next state is partially dependent on the current state (only in the case of the `count` state variable), which is implemented by passing a callback to `setCount()`.
+
+    - The argument of the callback is the value of the `count` variable in the *current state*. 
+    
+    - The return value of the callback is the value of the `count` variable in the *new state*.
+
+2. The `name` variable is not so the call to `setName()` is performed as usual.
+
 ```js
 import React from "react";
 import { useState } from "react"; // Since this is a named import, we can use this method directly using its name. Otherwise, we would have had to use React.useState()
@@ -549,7 +563,7 @@ function FunctionalStatefulComp() {
 
     return (<div>
         <p>Count: {count}</p>
-        <button onClick={() => setCount(count + 1)}>Increment count</button>
+        <button onClick={() => setCount(prevCount) => (prevCount + 1)}>Increment count</button>
 
         <p>Name: {name}</p>
         <button onClick={() => setName("Jane")}>Change name</button>
@@ -731,6 +745,54 @@ class ConditionalRendering extends React.Component {
 
 export default ConditionalRendering;
 ```
+
+---
+
+# Is it ok to use conditional statements inside the `render()` method?
+
+- It is generally recommended to avoid adding conditional statements inside the `render()` method of class-based React components. 
+
+  The reason is that the `render()` method should be a ***pure function*** that returns the same output for the same input, and adding conditional statements to it can make it *unpredictable* and *potentially cause performance issues*.
+
+- When you have conditional statements inside the `render()` method, it can make the component re-render multiple times when the state or props change, even if the output of the render() method would be the same. 
+  
+  This can lead to unnecessary re-renders and can make the application less performant.
+
+- Instead of adding conditional statements inside the `render()` method, you should move the conditionals outside of the `render()` method and use them to determine which elements to render. 
+  
+  Then you can use the result of the conditionals to return the appropriate JSX elements.
+
+Here is an example of how you can use conditional statements outside of the `render()` method to determine which elements to render:
+
+```js
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showComponent: true,
+    };
+  }
+
+  toggleComponent = () => {
+    this.setState(prevState => ({
+      showComponent: !prevState.showComponent
+    }));
+  }
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.toggleComponent}>Toggle Component</button>
+        {this.state.showComponent && <ComponentToRender />}
+      </div>
+    );
+  }
+}
+```
+
+In this example, the `render()` method returns a button that, when clicked, will toggle the state of `showComponent`, and based on that state, it will render the `ComponentToRender` or not. 
+
+This way, the component only re-renders when the state changes, and not multiple times based on the conditionals inside the `render()` method.
 
 ---
 
