@@ -29,7 +29,10 @@
     - [`&&` operator](#-operator)
     - [`||` operator](#-operator-1)
   - [Using if-else or ternary operators](#using-if-else-or-ternary-operators)
-- [Is it ok to use conditional statements inside the `render()` method?](#is-it-ok-to-use-conditional-statements-inside-the-render-method)
+- [React best-practices \& lingo](#react-best-practices--lingo)
+  - [Is it ok to use conditional statements inside the `render()` method?](#is-it-ok-to-use-conditional-statements-inside-the-render-method)
+  - [Should we use the `document` browser API within React components?](#should-we-use-the-document-browser-api-within-react-components)
+  - [What is meaning of *prop coming from above*?](#what-is-meaning-of-prop-coming-from-above)
 - [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 - [Important Concepts](#important-concepts)
   - [Are the `node_modules` that we use for local development, also used in browser?](#are-the-node_modules-that-we-use-for-local-development-also-used-in-browser)
@@ -748,7 +751,9 @@ export default ConditionalRendering;
 
 ---
 
-# Is it ok to use conditional statements inside the `render()` method?
+# React best-practices & lingo
+
+## Is it ok to use conditional statements inside the `render()` method?
 
 - It is generally recommended to avoid adding conditional statements inside the `render()` method of class-based React components. 
 
@@ -793,6 +798,80 @@ class MyComponent extends React.Component {
 In this example, the `render()` method returns a button that, when clicked, will toggle the state of `showComponent`, and based on that state, it will render the `ComponentToRender` or not. 
 
 This way, the component only re-renders when the state changes, and not multiple times based on the conditionals inside the `render()` method.
+
+## Should we use the `document` browser API within React components?
+
+It's generally not recommended to use the `document` browser API within React components, because it can make the component less predictable and harder to test.
+
+- React is designed to work with a virtual DOM, which abstracts away the actual DOM and updates it efficiently. 
+
+  When you use the `document` browser API, you're bypassing React's virtual DOM and directly manipulating the actual DOM. This can cause inconsistencies between the virtual and actual DOMs and make the component less predictable.
+
+- Additionally, when you use the `document` browser API, it can make the component harder to test because you're now testing both the component and the browser API, and it can also make it harder to debug issues because it's not clear whether the problem is with the component or the browser API.
+
+- Instead of using the document browser API, you should try to use React's built-in features to handle the same functionality, such as using the `ref` system to interact with a specific DOM node or using the `useEffect` hook to attach event listeners.
+
+> Note: In cases when you need to use the `document` browser API, it's recommended to use it in a top-level component, such as a component that wraps your entire application, or in a utility function that's not part of a component.
+
+## What is meaning of *prop coming from above*?
+
+When a parent component renders a child component, it can pass data to the child component through `props`. The child component can then use this data to render itself or to determine its behavior.
+
+The phrase *"prop coming from above"* typically refers to the fact that the `prop` is being passed down from a higher-level component to a lower-level component. It means that the value of the `prop` is coming from the parent component, or even a grandparent component, rather than being defined within the component itself.
+
+Here's an example of a parent component passing a prop to a child component:
+```jsx
+// Parent component
+function Parent() {
+  return <Child name="John" />;
+}
+
+// Child component
+function Child({ name }) {
+  return <p>Hello, {name}!</p>;
+}
+```
+
+In this example, the Parent component is passing the name prop to the Child component. The Child component then uses this prop to render a greeting message. The name prop is coming from above, as it is passed down from the Parent component to the Child component.
+
+> ***Note***: The component that receives `props`, should not modify them. They should be treated as *read-only* values. 
+> 
+> If you want to update the value of a prop, you should do it by calling a callback function passed as a prop from the parent component, this way you are not modifying the value of the prop, you are passing the new value to the parent component, and the parent component will decide what to do with it.
+>
+> For example:
+> ```jsx
+> // Parent component
+> function Parent() {
+>   const [name, setName] = useState("John");
+>  
+>   const handleNameChange = (newName) => {
+>     setName(newName);
+>   }
+>   return <Child name={name} onNameChange={handleNameChange} />;
+> }
+>
+> // Child component
+> function Child({ name, onNameChange }) {
+>   return (
+>     <>
+>       <p>Hello, {name}!</p>
+>       <button onClick={() => onNameChange("Jane")}>Change name</button>
+>     </>
+>   );
+> }
+> ```
+>
+> In this example, the `Parent` component has a state variable name with an initial value of `"John"`. It also has a callback function `handleNameChange` which updates the value of the name state variable. This callback function is passed as a prop `onNameChange` to the Child component.
+> 
+> The `Child` component receives the `name` prop and the `onNameChange` prop, it renders the name, and it also has a button. 
+> 
+> When the button is clicked, the `onNameChange` callback function is called and it passes the new name `"Jane"` as an argument.
+> 
+> The `handleNameChange` callback function gets called and updates the name state variable with the new value `"Jane"` using `setName` hook.
+> 
+> This way, the value of the `name` prop is updated in the `Parent` component, and the `Child` component re-renders with the updated value.
+
+It's worth mentioning that, in this example, the component that receives the callback function does not know what happens inside the function, it just knows that when it is called, it should update the value of the prop.
 
 ---
 
