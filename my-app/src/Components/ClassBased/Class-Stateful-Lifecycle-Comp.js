@@ -40,7 +40,6 @@ class ClassBasedStatefulComp extends React.Component {
       this.timerID = setInterval(() => this.tick(), 1000);
     }
 
-
     // This `lifecycle method` is called if the element created using the ClassBasedStatefulComp component is ever removed from the DOM.
     //? No need for arrow function over here since this is a pre-defined method of class based react components, whose `this` value is automatically tied to the current component instance.
     componentWillUnmount = () => {

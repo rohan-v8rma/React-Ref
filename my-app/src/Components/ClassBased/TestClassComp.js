@@ -10,8 +10,6 @@ class TestingComponent extends React.Component {
     constructor(props) {
         super(props)
         
-        
-
         this.state = {
             date: new Date(),
             marginInPixels: this.getRandomMarginValue()
