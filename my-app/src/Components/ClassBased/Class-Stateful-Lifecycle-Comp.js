@@ -1,8 +1,8 @@
 import React from "react";
 
-class ClassBasedStatefulComp extends React.Component {
+class ClassStatefulLifecycleComp extends React.Component {
 
-    // When a ClassBasedStatefulComp component is passed to `root.render()`, React calls the `constructor` method of ClassBasedStatefulComp component. Used to initialize the states.
+    // When a ClassStatefulLifecycleComp component is passed to `root.render()`, React calls the `constructor` method of ClassStatefulLifecycleComp component. Used to initialize the states.
     constructor(props) {
         super(props); // Mandatory for derived classes
 
@@ -34,13 +34,13 @@ class ClassBasedStatefulComp extends React.Component {
     }
 
 
-    // This `lifecycle method` is called once the element created using ClassBasedStatefulComp component has been inserted in the DOM. 
+    // This `lifecycle method` is called once the element created using ClassStatefulLifecycleComp component has been inserted in the DOM. 
     //? No need for arrow function over here since this is a pre-defined method of class based react components, whose `this` value is automatically tied to the current component instance.
     componentDidMount() {
       this.timerID = setInterval(() => this.tick(), 1000);
     }
 
-    // This `lifecycle method` is called if the element created using the ClassBasedStatefulComp component is ever removed from the DOM.
+    // This `lifecycle method` is called if the element created using the ClassStatefulLifecycleComp component is ever removed from the DOM.
     //? No need for arrow function over here since this is a pre-defined method of class based react components, whose `this` value is automatically tied to the current component instance.
     componentWillUnmount = () => {
       clearInterval(this.timerID);
@@ -71,4 +71,4 @@ class ClassBasedStatefulComp extends React.Component {
     
 }
 
-export default ClassBasedStatefulComp
+export default ClassStatefulLifecycleComp
