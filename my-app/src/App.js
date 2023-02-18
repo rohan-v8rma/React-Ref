@@ -1,14 +1,14 @@
 import AppStyles from './App.module.css';
-import ConditionalRenderingExample from './Pages/ConditionalRendering'
+import ClassBasedStatefulComp from './Components/ClassBased/Class-Stateful-Lifecycle-Comp';
+import ComponentDidUpdateTest from './Components/ClassBased/componentDidUpdateTest';
 
+// Names of React components should start with an uppercase letter.
 
 // Another way of passing props
 function App() {
-// function App(props) {
-
-  return (
-    <ConditionalRenderingExample />
-  )
+  return (<>
+    <ComponentDidUpdateTest />
+    </>)
 }
 
 export default App;
