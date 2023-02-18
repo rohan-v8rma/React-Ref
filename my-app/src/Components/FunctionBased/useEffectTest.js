@@ -24,6 +24,13 @@ export default function UseEffectTest() {
             .then(json => console.log(json))
     }, []) // Empty dependency array
  
+    //* Actually placing a value in the dependency array
+    //? The code below achieves the function of `componentDidMount` as well as `componentDidUpdate` where it compares the previous state (passed as an argument in the case of `componentDidUpdate`) with the current state before executing.
+    useEffect(() => {
+        console.log("State changed")
+    }, [count]) // Execution of callback dependent on `count`
+
+
     return (<>
     {/* Passing a callback to the button element */}
     <button onClick={() => setCount(prevCount => prevCount + 1)}>bruhhhhhh{count}</button>
