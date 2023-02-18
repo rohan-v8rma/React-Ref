@@ -2,13 +2,28 @@ import React from "react";
 
 //! Look through `Class-Stateful-Lifecycle-Comp.js` to under stand the basic syntax of class-based components
 
+// We introduced a new state variable `letter`. The issue with this is we get the logged value of last and current state of `count`, even when it hasn't changed since `componentDidUpdate` is called after every re-render
+
 class componentDidUpdateTest extends React.Component {
     constructor(props) {
         super(props); 
         
         this.state = {
             count: 0,
+            letter: 'a'
         }
+    }
+
+
+
+    generateRandomLetter() {
+        return( String.fromCharCode( Math.floor(Math.random() * 26) + 97 ) );
+    } 
+    
+    changeLetter = () => {
+        this.setState({
+            letter: this.generateRandomLetter()
+        })
     }
 
     incrementCount = () => {
@@ -31,6 +46,8 @@ class componentDidUpdateTest extends React.Component {
         return (<div>
             <p>Count: {this.state.count}</p>            
             <button onClick={() => this.incrementCount()}>Increment count</button>
+            <p>Letter: {this.state.letter}</p>            
+            <button onClick={() => this.changeLetter()}>Change letter</button>
         </div>)
     }
     
