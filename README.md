@@ -10,17 +10,25 @@
     - [Named Exports](#named-exports)
   - [Importing](#importing)
     - [Using CSS modules in React](#using-css-modules-in-react)
-    - [CSS module loader object](#css-module-loader-object)
+    - [CSS module loader object (TODO: Complete)](#css-module-loader-object-todo-complete)
     - [Using IDs in `.module.css` files](#using-ids-in-modulecss-files)
+- [Using CSS Variables in React](#using-css-variables-in-react)
 - [Reconciliation](#reconciliation)
-- [Terminologies in React](#terminologies-in-react)
-  - [`props`](#props)
-    - [Destructuring `props`](#destructuring-props)
-    - [Default values for props, along with destructuring](#default-values-for-props-along-with-destructuring)
-  - [`refs`](#refs)
-  - [`keys`](#keys)
+- [What are `props`?](#what-are-props)
+  - [Destructuring `props`](#destructuring-props)
+  - [Default values for props, along with destructuring](#default-values-for-props-along-with-destructuring)
+- [What are `refs`?](#what-are-refs)
+- [What are `keys`?](#what-are-keys)
 - [Converting a Function to a Class](#converting-a-function-to-a-class)
+- [Hooks](#hooks)
+  - [Rules of Hooks](#rules-of-hooks)
+  - [Need of the `useEffect()` hook](#need-of-the-useeffect-hook)
+    - [What is a side-effect?](#what-is-a-side-effect)
+    - [Some examples of side-effects](#some-examples-of-side-effects)
+    - [Code-snippet without `useEffect()`](#code-snippet-without-useeffect)
+    - [Code snippet incorporating `useEffect()`](#code-snippet-incorporating-useeffect)
 - [State](#state)
+  - [Why can't we just use a local variable in the component instead of a state variable?](#why-cant-we-just-use-a-local-variable-in-the-component-instead-of-a-state-variable)
   - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
   - [Code-snippet demonstrating usage of `setState()`](#code-snippet-demonstrating-usage-of-setstate)
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
@@ -29,28 +37,14 @@
     - [`&&` operator](#-operator)
     - [`||` operator](#-operator-1)
   - [Using if-else or ternary operators](#using-if-else-or-ternary-operators)
-- [React best-practices \& lingo](#react-best-practices--lingo)
+- [React best-practices, common errors \& terminology](#react-best-practices-common-errors--terminology)
   - [Is it ok to use conditional statements inside the `render()` method?](#is-it-ok-to-use-conditional-statements-inside-the-render-method)
   - [Should we use the `document` browser API within React components?](#should-we-use-the-document-browser-api-within-react-components)
   - [What is meaning of *prop coming from above*?](#what-is-meaning-of-prop-coming-from-above)
-- [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
-- [Important Concepts](#important-concepts)
-  - [Are the `node_modules` that we use for local development, also used in browser?](#are-the-node_modules-that-we-use-for-local-development-also-used-in-browser)
   - [Configuring React build process](#configuring-react-build-process)
   - [`--isolatedModules` error in React, when using TypeScript](#--isolatedmodules-error-in-react-when-using-typescript)
     - [Using `import` and `export` keywords to fix the error](#using-import-and-export-keywords-to-fix-the-error)
-  - [Server Side Rendering](#server-side-rendering)
-    - [1. Improved SEO](#1-improved-seo)
-    - [2. Faster initial load time](#2-faster-initial-load-time)
-    - [3. Better user experience for slow internet connection](#3-better-user-experience-for-slow-internet-connection)
-    - [Setting up SSR](#setting-up-ssr)
-    - [Downsides of SSR](#downsides-of-ssr)
-    - [Overcoming the downsides of SSR](#overcoming-the-downsides-of-ssr)
-      - [1. Use caching](#1-use-caching)
-      - [2. Use a Content Delivery Network (CDN)](#2-use-a-content-delivery-network-cdn)
-      - [3. Use long term caching](#3-use-long-term-caching)
-      - [4. Use the browser storage](#4-use-the-browser-storage)
-      - [Some caveats with these optimizations](#some-caveats-with-these-optimizations)
+- [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 
 
 state management
@@ -62,9 +56,6 @@ state listener
 # selective rendering
 
 call to action
-
-
-export default meaning'
 
 
 Welcome.module.css WelcomeStyles.div is an inline style, so it is more powerful than index.css
@@ -115,6 +106,8 @@ npm run build
 ```
 
 # Importing and Exporting in React
+
+Refer this cheatsheet if short on time: https://www.samanthaming.com/tidbits/79-module-cheatsheet/
 
 https://www.educative.io/answers/what-is-importing-and-exporting-in-react-js
 
@@ -210,7 +203,7 @@ Files with names of the format `[name].module.css` are modular CSS files, whose 
 
 Instead we need to `import` them as named-imports. 
 
-### CSS module loader object
+### CSS module loader object (TODO: Complete)
 
 This creates a CSS module loader object in JS (TODO: What exactly is this?), which has the class/id names as keys and the uniquely generated CSS classes as values.
 
@@ -293,6 +286,54 @@ Take a look at [this](https://www.triplet.fi/blog/practical-guide-to-react-and-c
 
 ---
 
+# Using CSS Variables in React
+
+Take a look at the `CSSVarTest.js` and `CSSVarTest.module.css` files to understand how to use CSS Variables with React. 
+
+The code snippets are also given below:
+
+`CSSVarTest.js`:
+```jsx
+import styles from './CSSVarTest.module.css'
+
+
+export default function TestFunctionComp() {
+    return(<div style={// This brace allows writing of js syntax within jsx
+        {// This is a JS object that is being passed to the style attribute
+            '--backgroundColor':'red',
+            '--borderColor':'green'
+        }
+        }>
+        <div className={`${styles.child}`}></div>
+        <div className={`${styles.child}`}></div>
+        <div className={`${styles.child}`}></div>
+        <div className={`${styles.child}`}></div>
+    </div>)
+}
+```
+
+`CSSVarTest.module.css`:
+```css
+:root {
+    --backgroundColor: yellow;
+    --borderColor: black;
+}
+
+/* 
+
+*/
+
+.child {
+    height: 100px;
+    width: 100px;
+    border: var(--borderColor) 1px solid;
+    background-color: var(--backgroundColor);
+}
+```
+
+- The variables are defined for the root element (using the `:root` selector) meaning all children of the root element will have access to these variable values.
+- When we pass other values for these variables to the parent div of the `.child` divs, they override the values specified in the :root selector, making the new values available to the children.
+
 # Reconciliation 
 
 <h3>Does using <code>root.render()</code> to render elements overrwrite the pre-existing content within <code>root</code>?</h3>
@@ -310,9 +351,7 @@ When you use React, you should not manually update the actual DOM yourself. Inst
 
 ---
 
-# Terminologies in React
-
-## `props` 
+# What are `props`?
 
 `props` are a way to pass data between components. They look like HTML attributes when you send them, and arrive as an object in the form of `this.props`.
 
@@ -328,7 +367,7 @@ function MyComponent(props) {
 }
 ```
 
-### Destructuring `props`
+## Destructuring `props`
 
 Destructuring props allows you to extract specific properties from the `props` object passed to a component and assign them to separate variables. This can make the component's code more readable and concise.
 
@@ -348,7 +387,7 @@ function MyComponent({ name, age, address }) {
 
 In this example, the component receives three props: `name`, `age`, and `address`. Instead of accessing the props using the dot notation (e.g. `props.name`), the component uses destructuring to extract the values of these props and assigns them to separate variables.
 
-### Default values for props, along with destructuring
+## Default values for props, along with destructuring
 
 ```js
 function MyComponent({ 
@@ -370,14 +409,18 @@ In this example, if the `name`, `age` and `address` prop are not passed to `MyCo
 
 ---
 
-## `refs` 
+# What are `refs`?
 
-`refs` are how you snag data out of the form element we created.
+Refs in React allow you to access the properties of a DOM element directly. This can be useful in various situations, such as:
+- Getting the input value of a form field
+- Triggering a focus on an element, or 
+- Measuring the position and size of an element
 
-## `keys` 
+But, over-use of refs as a substitute for state management and re-rendering should be avoided being handled manually, allowing React to take care of it.
 
-a way to uniquely identify a component when it’s repeated. We’re repeating comments here (there can be multiple comments), so if we were to have functionality that could change any of them, having a key is what makes React efficient (it can just replace that single comment instead of all of themcreating grid design css
-- ).
+# What are `keys`?
+
+`keys` are a way to uniquely identify a component when it’s repeated. 
 
 # Converting a Function to a Class
 
@@ -420,7 +463,116 @@ class Clock extends React.Component {
 
 Check out edge bookmarks for more details.
 
+---
+
+# Hooks
+
+## Rules of Hooks
+
+Refer this link for more information: https://reactjs.org/docs/hooks-rules.html.
+
+Watch this video for more examples: https://www.youtube.com/watch?v=jzrY8fG7HoI
+
+Use the following ESlint plugin to get warnings when these rules are not being met:
+```
+npm install eslint-plugin-react-hooks --save-dev
+```
+This is contained within the create-react-app by-defaut.
+
+
+## Need of the `useEffect()` hook
+
+This hook acts as a replacement for the lifecycle methods in Class-based components (demonstrated with examples in `Class-Stateful-Lifecycle-Comp.js` and `componentDidUpdateTest.js`)
+
+Take a look at the `useEffectTest.js` file for examples with accompanying inline documentation. 
+
+### What is a side-effect?
+
+In general, a side-effect is when a procedure changes a variable from outside its scope i.e., an external event lead to the changing of the value of the variable. 
+
+### Some examples of side-effects
+
+1. Fetching data
+    ```js
+    fetch('./users').then(() => {})
+    ```
+2. Setting up timers and intervals
+    ```js
+    setInterval( () => console.log('timer'), 1000);
+    ```
+3. Setting up event handlers
+    ```js
+    document.addEventListener('mouseover', () => {});
+    ```
+
+    > ***Note***: Directly attaching event listeners to DOM elements in React is not a good practice. This is just an example.
+
+### Code-snippet without `useEffect()`
+
+In order to understand properly, let us take a look at some code that doesn't contain the `useEffect()` hook.
+
+The ***intended functionality of the component*** was to add themed classes to the `Clock` widget based on the time of day.
+
+```js
+import {useState} from 'react'
+
+export default function Clock({ time }) {
+  
+  const [nightOrDay, setMode] = useState('night');
+  
+  let hours = time.getHours();
+  
+  if (hours >= 0 && hours <= 6) {
+    setMode('night');
+  } else {
+    setMode('day');
+  }
+  
+  return (<>
+    <h1 className={nightOrDay}>
+      {time.toLocaleTimeString()}  
+  );
+}
+```
+
+As mentioned in the React docs [here](https://beta.reactjs.org/reference/react/useState#setstate), the state setter function that is a part of the `useState()` hook triggers a re-render.
+
+In the code above, a call to the state setter function is part of the **synchronous rendering code**, resulting in an *infinite loop of re-renders*.
+
+### Code snippet incorporating `useEffect()`
+
+```js
+import {useState} from 'react'
+
+export default function Clock({ time }) {
+  
+  const [nightOrDay, setMode] = useState('night');
+  
+  let hours = time.getHours()
+
+  useEffect(() => {
+    if (hours <= 6 && nightOrDay === 'day') {
+        setMode('night');
+    } 
+    else if(hours > 6 && nightOrDay === 'night') {
+      setMode('day');
+    }
+  }, [hours])
+  
+  return (<>
+    <h1 className={nightOrDay}>
+      {time.toLocaleTimeString()}  
+    </h1>
+  </>);
+}
+```
+---
+
 # State
+
+## Why can't we just use a local variable in the component instead of a state variable?
+
+See the first example in this link to understand the answer: https://beta.reactjs.org/learn/state-a-components-memory
 
 ## Difference between `setState()` and `useState()`
 
@@ -432,7 +584,7 @@ Both `setState()` and `useState()` are used to update the state of a React compo
 
     It is called on the component instance, and it takes an *object* or a *function* as an argument. The *object* or *function* passed to `setState()` will be merged with the current state, and the component will re-render with the updated state.
 
-2. `useState()`, on the other hand, is a Hook that allows you to add state to a ***functional component***. 
+2. `useState()`, on the other hand, is a [Hook](#hooks) that allows you to add state to a ***functional component***. 
 
     It is called at the top level of your component, and it takes an *initial state value* as an argument. 
     
@@ -443,12 +595,6 @@ Both `setState()` and `useState()` are used to update the state of a React compo
   You can call `useState()` multiple times to have multiple state variables.
 
 ---
-
-Another key difference between the two is that:
-
--  `setState()` is an ***asynchronous operation*** and the state updates are batched together for performance reasons. 
-
-- `useState()` updates are ***synchronous***, the state updates are immediately reflected in the component re-render.
 
 > ***Note***: `setState()` is only available for class-based components and `useState()` is only for functional components.
 >
@@ -592,6 +738,8 @@ When the button is clicked, the component instance calls the `setCount(count + 1
 >     However, this is NOT possible to do manually using regular JS syntax. Strings and numbers can only be re-assigned to new values, which is why `const` primitives cannot be updated manually.
 >
 > 2. The `useState()` hook can be used multiple times to manage multiple state variables.
+
+Read more about the state setter method returned by the `useState` hook here: https://beta.reactjs.org/reference/react/useState#setstate
 
 ---
 
@@ -751,7 +899,7 @@ export default ConditionalRendering;
 
 ---
 
-# React best-practices & lingo
+# React best-practices, common errors & terminology
 
 ## Is it ok to use conditional statements inside the `render()` method?
 
@@ -875,34 +1023,6 @@ It's worth mentioning that, in this example, the component that receives the cal
 
 ---
 
-# See Edge bookmarks for more resources
-
-# Important Concepts
-
-## Are the `node_modules` that we use for local development, also used in browser?
-
-When building a web application, it is common to use JavaScript libraries and frameworks that are installed using package managers such as `npm` or `yarn`. 
-
-These libraries and frameworks are typically installed into the `node_modules` directory in the project's root directory.
-
-Browsers, however, do not have the capability to directly interpret or execute code from the `node_modules` directory. 
-
-This means that if you want to use code from a library or framework that is installed in `node_modules`, you need to take some additional steps to make it available to the browser.
-
-There are a few different ways to make the code from `node_modules` available to the browser, such as:
-
-1. Using a bundler such as ***webpack*** or ***Parcel*** to package the code from `node_modules` along with your application's code into a single bundle that the browser can understand.
-
-2. Making a reference to the built/compiled version of the library on a CDN, these are pre-built versions of the library that can be referenced directly in the browser.
-
-3. Using an import map, which is a JSON file that allows to map the package names to the URL where the package can be found.
-  
-These additional steps are necessary to make the code from `node_modules` available to the browser, because the browser doesn't have the capability to understand the code from the `node_modules` directory and also it's not designed to work with the native format of modules in JavaScript.
-
-It's worth noting that, depending on the complexity of the application, the approach of using a bundler, a CDN or import maps will change. 
-
-And it's also important to ensure that the browser that the app will be loaded on, supports the version of the library you're using.
-
 ## Configuring React build process
 
 There are several different ways to configure the build process for a React application, depending on your specific requirements and the tools you are using. However, the most common way is to use a JavaScript bundler such as Webpack, Parcel or Browserify.
@@ -999,80 +1119,5 @@ export const dummy = {};
 > It's important to note that this approach should only be used as a temporary solution while you're working on your code, and it's considered as a best practice to have meaningful exports and imports in your codebase.
 
 
-## Server Side Rendering 
 
-Server-side rendering (SSR) is the process of rendering a React application on the server and sending the fully-rendered HTML to the client. This can provide a number of benefits, such as:
-
-### 1. Improved SEO
-
-Search engines can easily crawl and index the fully-rendered HTML, making it easier for users to find your website.
-
-### 2. Faster initial load time
-
-With SSR, the initial HTML is already loaded on the page, so the browser can start rendering the page immediately, which can make the initial load time faster.
-
-### 3. Better user experience for slow internet connection
-
-By sending a fully-rendered page, the user can start interacting with the page even before the JavaScript has loaded, improving the user experience for users on slow internet connections.
-
----
-
-### Setting up SSR
-
-There are a few libraries that can help you to set up SSR for your React application. 
-
-One of the most popular libraries is `Next.js`. 
-
-`Next.js` is a framework that allows you to easily set up SSR for your React application. It provides a simple way to organize your code and handle routing, while also providing a development server that automatically handles SSR for you. 
-
-You can also use other popular libraries like `Razzle` or `after.js`.
-
-Setting up SSR can be a bit more complex than setting up a traditional client-side React application, as you'll need to handle rendering on the server as well as on the client. 
-
-However, with the help of these libraries, it can be much easier to set up SSR for your application.
-
-When it comes to implementation, the first thing to do is to run the React application on the server and render the initial HTML on the server-side. This initial HTML can be returned to the browser and rendered. After the page has been loaded, React takes over and renders the page client-side. 
-
-This process of rendering on the server and client side is called ***"isomorphic rendering"*** or ***"universal rendering"***.
-
-It's worth noting that, if your application does not need the benefits mentioned above, you may not need SSR, then you can just render your application on client side.
-
----
-
-### Downsides of SSR
-
-Every request leads to a new page being re-rendered from the server to the browser. 
-
-This means all the scripts, styles, and templates will be reloaded on the browser each time a request is sent to the server, resulting in a poor user experience.
-
-### Overcoming the downsides of SSR
-
-There are a few different ways to prevent every request from re-downloading resources such as stylesheets and templates of an SSR application:
-
-#### 1. Use caching
-
-One of the simplest ways to prevent resources from being re-downloaded is to use caching. By caching resources such as stylesheets and templates, the server can return the cached version of the resource instead of re-downloading it on every request. This can be done by adding appropriate headers to the response, such as Cache-Control or Expires headers. Some server-side frameworks or http servers have built-in caching features.
-
-#### 2. Use a Content Delivery Network (CDN)
-
-Another way to prevent resources from being re-downloaded is to use a Content Delivery Network (CDN). A CDN is a network of servers that are distributed around the world, and it's used to deliver content to users based on their geographic location. By using a CDN, resources such as stylesheets and templates can be cached at the edge of the network, so they are delivered to users faster and with less load on the origin server.
-
-#### 3. Use long term caching
-
-A modern way to prevent resources from being re-downloaded is to use long-term caching. This is a technique in which assets are given a unique name or hash based on its contents, so when the contents of the file are updated, the name or the hash would change. This way, the browser would detect that the file is different and download it again, but if the file stays the same, the browser would use the cached version and prevent the request.
-
-#### 4. Use the browser storage
-
-Another way to prevent resources from being redownloaded on each request is to use the browser storage, such as `localStorage` or `indexedDB` storage. 
-
-By storing the resources in the browser storage after the first request, it prevents the resources from being re-downloaded on each request.
-
----
-
-#### Some caveats with these optimizations
-
-It's worth noting that some of the aforementioned methods may not work with all types of resources, and different methods may work better depending on the specific use case. 
-
-It's also important to consider:
-- How caching and long-term caching will interact with deployment of new versions of the app and; 
-- To have a way to expire the caches on a controlled basis.
+# See Edge bookmarks for more resources

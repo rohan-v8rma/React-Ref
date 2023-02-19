@@ -1,0 +1,12 @@
+:root {
+    --backgroundColor: yellow;
+    --borderColor: black;
+}
+
+
+.child {
+    height: 100px;
+    width: 100px;
+    border: var(--borderColor) 1px solid;
+    background-color: var(--backgroundColor);
+}
