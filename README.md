@@ -1,7 +1,7 @@
 # INDEX
 
 - [INDEX](#index)
-- [selective rendering](#selective-rendering)
+- [TODO](#todo)
 - [Updating version of node before `create-react-app`](#updating-version-of-node-before-create-react-app)
 - [Creating React Application](#creating-react-application)
 - [Importing and Exporting in React](#importing-and-exporting-in-react)
@@ -55,19 +55,10 @@
     - [Using `import` and `export` keywords to fix the error](#using-import-and-export-keywords-to-fix-the-error)
 - [See Edge bookmarks for more resources](#see-edge-bookmarks-for-more-resources)
 
+# TODO
 
-state management
-
-state of component
-
-state listener
-
-# selective rendering
-
-call to action
-
-
-Welcome.module.css WelcomeStyles.div is an inline style, so it is more powerful than index.css
+- call to action
+- Welcome.module.css WelcomeStyles.div is an inline style, so it is more powerful than index.css: Figure out why this is
 
 # Updating version of node before `create-react-app`
 
