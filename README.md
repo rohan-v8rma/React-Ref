@@ -17,6 +17,11 @@
 - [What are `props`?](#what-are-props)
   - [Destructuring `props`](#destructuring-props)
   - [Default values for props, along with destructuring](#default-values-for-props-along-with-destructuring)
+  - [Checking prop types and making them required](#checking-prop-types-and-making-them-required)
+    - [Why you should type-check props in React](#why-you-should-type-check-props-in-react)
+    - [How to use `prop-types` package to type-check props and make them required](#how-to-use-prop-types-package-to-type-check-props-and-make-them-required)
+    - [Why is the `prop-types` package a regular-dependency and not a dev-dependency?](#why-is-the-prop-types-package-a-regular-dependency-and-not-a-dev-dependency)
+    - [](#)
 - [What are `refs`?](#what-are-refs)
 - [What are `keys`?](#what-are-keys)
 - [Converting a Function to a Class](#converting-a-function-to-a-class)
@@ -32,6 +37,10 @@
   - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
   - [Code-snippet demonstrating usage of `setState()`](#code-snippet-demonstrating-usage-of-setstate)
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
+- [React Router](#react-router)
+  - [Types of Routers](#types-of-routers)
+  - [`useParams()` hook](#useparams-hook)
+  - [What happens internally when a `<Link>` tag is clicked](#what-happens-internally-when-a-link-tag-is-clicked)
 - [Conditional Rendering](#conditional-rendering)
   - [Using Short-Circuit Operators](#using-short-circuit-operators)
     - [`&&` operator](#-operator)
@@ -407,6 +416,29 @@ function MyComponent({
 
 In this example, if the `name`, `age` and `address` prop are not passed to `MyComponent` for the purpose of creating an element; the values Rohan, 25 and India will be used.
 
+## Checking prop types and making them required
+
+### Why you should type-check props in React
+
+https://blog.logrocket.com/the-modern-guide-to-react-prop-types/
+
+### How to use `prop-types` package to type-check props and make them required
+
+https://blog.logrocket.com/validate-react-props-proptypes/
+
+Type-checking props OR making props as required results in issuing of warnings in the console when the props are NOT of the appropriate type or are NOT passed to the component.
+
+### Why is the `prop-types` package a regular-dependency and not a dev-dependency?
+
+`prop`-types is a regular dependency rather than a dev dependency because it is used at runtime to validate the props being passed to a component, and provides helpful error messages in case of any mismatch or missing props. 
+
+In other words, it is used for production code as well, rather than development purposes only. 
+
+Therefore, it is necessary to include it in the final production bundle, and not just during development.
+
+
+
+### 
 ---
 
 # What are `refs`?
@@ -569,6 +601,12 @@ export default function Clock({ time }) {
 ---
 
 # State
+
+To figure out which piece of data is state. Ask three questions about each piece of data:
+
+1. Is it passed in from a parent via props? If so, it probably isn’t state.
+2. Does it remain unchanged over time? If so, it probably isn’t state.
+3. Can you compute it based on any other state or props in your component? If so, it isn’t state.
 
 ## Why can't we just use a local variable in the component instead of a state variable?
 
@@ -740,6 +778,26 @@ When the button is clicked, the component instance calls the `setCount(count + 1
 > 2. The `useState()` hook can be used multiple times to manage multiple state variables.
 
 Read more about the state setter method returned by the `useState` hook here: https://beta.reactjs.org/reference/react/useState#setstate
+
+---
+
+# React Router
+
+## Types of Routers
+
+- BrowserRouter - Used in browser contexts
+- MemoryRouter - Used in testing environments when access to browser is not guaranteed, so routing information is stored in memory.
+- StaticRouter - Used in 
+
+## `useParams()` hook
+
+## What happens internally when a `<Link>` tag is clicked
+
+When a `<Link>` component in React Router is clicked, it internally uses the `history.push()` method to change the URL in the browser's address bar and navigate to the new route.
+
+This method pushes a new entry onto the history stack and triggers a re-render of the React components. The new entry replaces the current URL in the history stack with the new one, which allows the user to use the browser's back and forward buttons to navigate between pages.
+
+Additionally, the `<Link>` component also prevents the default behavior of the `<a>` tag, which is to perform a full page reload when clicked. Instead, it simply updates the URL and renders the appropriate component.
 
 ---
 
