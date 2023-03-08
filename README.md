@@ -21,7 +21,7 @@
     - [Why you should type-check props in React](#why-you-should-type-check-props-in-react)
     - [How to use `prop-types` package to type-check props and make them required](#how-to-use-prop-types-package-to-type-check-props-and-make-them-required)
     - [Why is the `prop-types` package a regular-dependency and not a dev-dependency?](#why-is-the-prop-types-package-a-regular-dependency-and-not-a-dev-dependency)
-    - [](#)
+    - [Validating the `children` prop](#validating-the-children-prop)
 - [What are `refs`?](#what-are-refs)
 - [What are `keys`?](#what-are-keys)
 - [Converting a Function to a Class](#converting-a-function-to-a-class)
@@ -34,6 +34,7 @@
     - [Code snippet incorporating `useEffect()`](#code-snippet-incorporating-useeffect)
 - [State](#state)
   - [Why can't we just use a local variable in the component instead of a state variable?](#why-cant-we-just-use-a-local-variable-in-the-component-instead-of-a-state-variable)
+  - [Is it more costly to store variables whose values can be calculated using props as state or is it more costly to calculate their values upon each re-render?](#is-it-more-costly-to-store-variables-whose-values-can-be-calculated-using-props-as-state-or-is-it-more-costly-to-calculate-their-values-upon-each-re-render)
   - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
   - [Code-snippet demonstrating usage of `setState()`](#code-snippet-demonstrating-usage-of-setstate)
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
@@ -427,9 +428,23 @@ In other words, it is used for production code as well, rather than development 
 
 Therefore, it is necessary to include it in the final production bundle, and not just during development.
 
+### Validating the `children` prop
 
+To validate the children prop in a React component, you can use the `PropTypes.node` property. Here's an example:
 
-### 
+```javascript
+import PropTypes from 'prop-types';
+
+function MyComponent({ children }) {
+  return <div>{children}</div>;
+}
+
+MyComponent.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+```
+In this example, the PropTypes.node property is used to validate that the children prop is either a React element or a primitive value (like a string or number). The isRequired property is used to ensure that the prop is passed to the component.
+
 ---
 
 # What are `refs`?
@@ -602,6 +617,16 @@ To figure out which piece of data is state. Ask three questions about each piece
 ## Why can't we just use a local variable in the component instead of a state variable?
 
 See the first example in this link to understand the answer: https://beta.reactjs.org/learn/state-a-components-memory
+
+## Is it more costly to store variables whose values can be calculated using props as state or is it more costly to calculate their values upon each re-render?
+
+Storing variables whose values can be calculated using props as state can be more costly than calculating their values upon each re-render.
+
+The reason for this is that adding unnecessary state to a component can increase the amount of work that React needs to do when rendering and reconciling changes. This can slow down the rendering process and lead to performance issues.
+
+In general, it is best to keep state minimal and calculate values that can be derived from props or other state variables during the rendering process. This can help to optimize performance and ensure that the component is always up-to-date with the latest data.
+
+Read more about it [here](https://beta.reactjs.org/learn/choosing-the-state-structure#avoid-redundant-state).
 
 ## Difference between `setState()` and `useState()`
 
