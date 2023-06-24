@@ -25,7 +25,13 @@
     - [How to use `prop-types` package to type-check props and make them required](#how-to-use-prop-types-package-to-type-check-props-and-make-them-required)
     - [Why is the `prop-types` package a regular-dependency and not a dev-dependency?](#why-is-the-prop-types-package-a-regular-dependency-and-not-a-dev-dependency)
     - [Validating the `children` prop](#validating-the-children-prop)
-- [What are `refs`?](#what-are-refs)
+- [React Refs](#react-refs)
+  - [Accessing DOM directly](#accessing-dom-directly)
+  - [Storing some state that doesn't trigger re-renders](#storing-some-state-that-doesnt-trigger-re-renders)
+  - [Use](#use)
+    - [Managing Focus](#managing-focus)
+    - [Accessing DOM Elements](#accessing-dom-elements)
+    - [Managing Uncontrolled Components](#managing-uncontrolled-components)
 - [What are `keys`?](#what-are-keys)
 - [Converting a Function to a Class](#converting-a-function-to-a-class)
 - [Hooks](#hooks)
@@ -515,14 +521,40 @@ In this example, the PropTypes.node property is used to validate that the childr
 
 ---
 
-# What are `refs`?
+# React Refs
 
-Refs in React allow you to access the properties of a DOM element directly. This can be useful in various situations, such as:
-- Getting the input value of a form field
-- Triggering a focus on an element, or 
-- Measuring the position and size of an element
+## Accessing DOM directly
+
+React refs provide a way to access and interact with DOM elements or React components directly. 
+
+They allow you to reference a specific element or component and access its properties or methods.
+
+React refs can be created using the useRef() hook. Once a ref is created, it can be attached to a React element as a JSX attribute, allowing you to access the underlying DOM element or component instance.
 
 But, over-use of refs as a substitute for state management and re-rendering should be avoided being handled manually, allowing React to take care of it.
+
+## Storing some state that doesn't trigger re-renders
+
+- Since local variables in functional components in React are NOT persisted across re-render, we can't use them to store any information that needs to stay with us.
+- Changes to state variable values trigger re-renders, so they are NOT suitable when we don't want that to happen.
+
+This is the exact use-case for refs, as a state management tool.
+
+## Use
+
+### Managing Focus
+
+You can use refs to manage focus on specific elements. For example, you can use a ref to automatically focus an input field when a component mounts or when a certain condition is met.
+
+### Accessing DOM Elements
+
+Refs can be used to directly access and manipulate DOM elements. This can be useful when you need to interact with a specific element, such as triggering animations, measuring dimensions, or manually scrolling.
+
+### Managing Uncontrolled Components
+
+In some cases, you might need to work with uncontrolled components, such as HTML form elements that manage their own state. Refs can be used to retrieve values or interact with these uncontrolled components directly.
+
+---
 
 # What are `keys`?
 
