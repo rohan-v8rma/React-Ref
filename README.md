@@ -13,7 +13,10 @@
     - [CSS module loader object (TODO: Complete)](#css-module-loader-object-todo-complete)
     - [Using IDs in `.module.css` files](#using-ids-in-modulecss-files)
 - [Using CSS Variables in React](#using-css-variables-in-react)
-- [Reconciliation](#reconciliation)
+- [Reconciliation \& Updates](#reconciliation--updates)
+  - [Taking an example...](#taking-an-example)
+  - [And another one...](#and-another-one)
+  - [Mapping array elements to React components](#mapping-array-elements-to-react-components)
 - [What are `props`?](#what-are-props)
   - [Destructuring `props`](#destructuring-props)
   - [Default values for props, along with destructuring](#default-values-for-props-along-with-destructuring)
@@ -40,13 +43,18 @@
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
 - [React Router](#react-router)
   - [Types of Routers](#types-of-routers)
-  - [`useParams()` hook](#useparams-hook)
+  - [`useParams()` hook (TODO)](#useparams-hook-todo)
   - [What happens internally when a `<Link>` tag is clicked](#what-happens-internally-when-a-link-tag-is-clicked)
+  - [Redirection in React Router](#redirection-in-react-router)
+  - [Unable to go back to previous items after re-direction](#unable-to-go-back-to-previous-items-after-re-direction)
+    - [The problem](#the-problem)
+    - [The solution  (`replace` prop in `<Navigate />` component)](#the-solution--replace-prop-in-navigate--component)
 - [Conditional Rendering](#conditional-rendering)
   - [Using Short-Circuit Operators](#using-short-circuit-operators)
     - [`&&` operator](#-operator)
     - [`||` operator](#-operator-1)
   - [Using if-else or ternary operators](#using-if-else-or-ternary-operators)
+- [Performance Profiling in React](#performance-profiling-in-react)
 - [React best-practices, common errors \& terminology](#react-best-practices-common-errors--terminology)
   - [Is it ok to use conditional statements inside the `render()` method?](#is-it-ok-to-use-conditional-statements-inside-the-render-method)
   - [Should we use the `document` browser API within React components?](#should-we-use-the-document-browser-api-within-react-components)
@@ -335,7 +343,7 @@ export default function TestFunctionComp() {
 - The variables are defined for the root element (using the `:root` selector) meaning all children of the root element will have access to these variable values.
 - When we pass other values for these variables to the parent div of the `.child` divs, they override the values specified in the :root selector, making the new values available to the children.
 
-# Reconciliation 
+# Reconciliation & Updates
 
 <h3>Does using <code>root.render()</code> to render elements overrwrite the pre-existing content within <code>root</code>?</h3>
 
@@ -349,6 +357,57 @@ React will only update the parts of the DOM that have changed, in order to minim
 
 When you use React, you should not manually update the actual DOM yourself. Instead, you should let React handle updates for you by calling `root.render()` and let it handle the diffing and re-rendering of your components.
 
+## Taking an example...
+
+***If suppose I have two separate components which are almost the same, except for the background color.***
+
+***Upon combining the components into one, with the background color being colored by a prop, will react's diffing algorithm take less time in switch between the versions of components since only a prop would be being changed instead of the components being changed, or will the performance benefits be marginal?***
+
+React's diffing algorithm, also known as reconciliation, is optimized for efficiently updating the UI by minimizing the number of changes needed to apply the updates. When two components are very similar, except for a few props, merging them into a single component with a prop to specify the background color can potentially improve performance.
+
+In this case, the reconciliation algorithm should be able to detect that only the prop value has changed, and update only the affected parts of the component. This can reduce the number of updates and improve performance compared to having two separate components that are almost identical.
+
+However, the performance benefits of this optimization may vary depending on the specific use case and the size and complexity of the components. It is always a good practice to profile and benchmark your application to ensure that it meets the desired performance requirements.
+
+## And another one...
+
+***If two components are exact same and one instance of the first component is replaced by an instance of the second component, is the react diffing algorithm able to quickly detect that they have the same markup, resulting in no performance losses upon re-render?***
+
+Yes, if two components have the exact same markup, and only their instances are being replaced, React's diffing algorithm will quickly detect that they have the same markup and will not need to perform a full re-render. Instead, it will simply update the state of the existing component to match the new props, resulting in minimal performance losses upon re-render.
+
+## Mapping array elements to React components
+
+```jsx
+const arrayElements = ['a', 'b', 'c'];
+
+const mappedComponents = arrayElements.map((element) => <span>{element}</span>);
+```
+
+This is the error we face when we directly map an array of elements to React components, similar to what is done above.
+
+```
+react-dom.development.js:86  Warning: Encountered two children with the same key, `.0`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted - the behavior is unsupported and could change in a future version.
+```
+
+The warning message "Encountered two children with the same key" is a warning provided by React to notify you that you have multiple child components within a parent component that have the same key prop value. In React, the key prop is used to uniquely identify each child component when performing updates.
+
+Each child component in a list or an array rendered by React should have a unique key prop value. This allows React to efficiently update and **reconcile** the DOM when changes occur, such as when items are added, removed, or reordered.
+
+When React encounters multiple child components with the same key value, it can cause unexpected behavior and errors in component rendering and updates. The warning message advises you to ensure that the key prop values for the children are unique to avoid such issues.
+
+To fix this warning, you need to assign a unique key prop value to each child component within the parent component. The key values should ideally be stable and unique identifiers, such as an ID associated with the data or a unique value generated based on the item's index in the array.
+
+```jsx
+const arrayElements = ['a', 'b', 'c'];
+
+const mappedComponents = arrayElements.map((element) => (
+  <React.Fragment key={uuidv4()}>
+    <span>{element}</span>
+  </React.Fragment>
+));
+```
+
+Read more about React fragments and keyed fragments over [here](https://legacy.reactjs.org/docs/fragments.html).
 
 ---
 
@@ -805,7 +864,7 @@ Read more about the state setter method returned by the `useState` hook here: ht
 - MemoryRouter - Used in testing environments when access to browser is not guaranteed, so routing information is stored in memory.
 - StaticRouter - Used in 
 
-## `useParams()` hook
+## `useParams()` hook (TODO)
 
 ## What happens internally when a `<Link>` tag is clicked
 
@@ -814,6 +873,109 @@ When a `<Link>` component in React Router is clicked, it internally uses the `hi
 This method pushes a new entry onto the history stack and triggers a re-render of the React components. The new entry replaces the current URL in the history stack with the new one, which allows the user to use the browser's back and forward buttons to navigate between pages.
 
 Additionally, the `<Link>` component also prevents the default behavior of the `<a>` tag, which is to perform a full page reload when clicked. Instead, it simply updates the URL and renders the appropriate component.
+
+## Redirection in React Router 
+
+- `<Redirect />` is a deprecated method from React Router v5.
+
+- `<Navigate />` is the appropriate method in React Router v6.
+
+Code snippets demonstrating use of `<Navigate />`:
+```jsx
+<Navigate to="/somewhere/else" />
+```
+OR
+```jsx
+<Routes>
+  <Route path='/' element={<h1>Home Page Component</h1>} />
+  <Route path='/login' element={<h1>Login Page Component</h1>} />
+    // New line
+  <Route path='*' element={<Navigate to='/' />} />
+</Routes>
+```
+
+Read more about it here[https://www.copycat.dev/blog/react-router-redirect/].
+
+## Unable to go back to previous items after re-direction
+
+### The problem
+
+Suppose we have a website in React that has multiple routes. Here is the react router setup:
+```jsx
+<Routes>
+  <Route path="/" element={<RootHeaderFooter />}>
+    <Route index={true} element={<RootLanding />} />
+    <Route path="contact-us" element={<RootContactUs />} />
+    <Route path="*" element={<Navigate to="/" />} />
+  </Route>
+
+  <Route path="/engineering/" element={<EnggHeaderFooter />}>
+    <Route index={true} element={<Navigate to="services" />} />
+    <Route path="about-us" element={<EnggAbout />} />
+    <Route path="careers" element={<EnggServices />} />
+    <Route path="contact-us" element={<EnggContactUs />} />
+    <Route path="featured-insights" element={<EnggInsights />} />
+    <Route path="services" element={<EnggCareers />} />
+    <Route path="*" element={<Navigate to="services" />} />
+  </Route>
+
+  <Route path="/technology/" element={<TechHeaderFooter />}>
+    <Route index={true} element={<Navigate to="services" />} />
+    <Route path="about-us" element={<TechAbout />} />
+    <Route path="careers" element={<TechServices />} />
+    <Route path="contact-us" element={<TechContactUs />} />
+    <Route path="featured-insights" element={<TechInsights />} />
+    <Route path="services" element={<TechCareers />} />
+    <Route path="*" element={<Navigate to="services" />} />
+  </Route>
+</Routes>
+```
+
+Assume you're navigating using the UI to the intended routes. Subsequently, upon typing in an unintended path like `/engineering/hello`, you get re-directed to `/engineering/services`, which is the intended behavior. 
+
+Now, when you click the back button in the browser, it tries to go back to `/engineering/hello`, which again re-directs to `/engineering/services`. 
+
+In this way, the pages visited before typing in the unintended path cannot be accessed.
+
+Is there some way to remove this unintended path from history before the re-direction occurs using the <Navigate/> element?
+
+### The solution  (`replace` prop in `<Navigate />` component)
+
+You can use the replace prop of the <Navigate> component to replace the current history entry instead of creating a new one. This will ensure that when the user presses the back button, they are taken to the previous valid URL instead of the unintended path.
+
+For example, you can modify your routes like this:
+
+```jsx
+<Routes>
+  <Route path="/" element={<RootHeaderFooter />}>
+    <Route index={true} element={<RootLanding />} />
+    <Route path="contact-us" element={<RootContactUs />} />
+    <Route path="*" element={<Navigate to="/" replace />} />
+  </Route>
+
+  <Route path="/engineering/" element={<EnggHeaderFooter />}>
+    <Route index={true} element={<Navigate to="services" replace />} />
+    <Route path="about-us" element={<EnggAbout />} />
+    <Route path="careers" element={<EnggServices />} />
+    <Route path="contact-us" element={<EnggContactUs />} />
+    <Route path="featured-insights" element={<EnggInsights />} />
+    <Route path="services" element={<EnggCareers />} />
+    <Route path="*" element={<Navigate to="services" replace />} />
+  </Route>
+
+  <Route path="/technology/" element={<TechHeaderFooter />}>
+    <Route index={true} element={<Navigate to="services" replace />} />
+    <Route path="about-us" element={<TechAbout />} />
+    <Route path="careers" element={<TechServices />} />
+    <Route path="contact-us" element={<TechContactUs />} />
+    <Route path="featured-insights" element={<TechInsights />} />
+    <Route path="services" element={<TechCareers />} />
+    <Route path="*" element={<Navigate to="services" replace />} />
+  </Route>
+</Routes>
+```
+
+Note the replace prop added to the `<Navigate>` component in the `path="*"` routes.
 
 ---
 
@@ -970,6 +1132,26 @@ class ConditionalRendering extends React.Component {
 
 export default ConditionalRendering;
 ```
+
+---
+
+# Performance Profiling in React
+
+***How do I go about doing performance profiling?***
+
+Profiling and benchmarking a React application involves measuring its performance metrics such as rendering time, memory usage, and network requests. This can be done using various tools available in the developer's toolkit. Here are some steps to get started:
+
+1. Use the built-in performance tool in your browser's developer tools to measure rendering time and identify performance bottlenecks.
+
+2. Use a tool like Lighthouse or WebPageTest to measure network performance, such as page load times and server response times.
+
+3. Use a memory profiler like the Chrome DevTools Memory panel to measure memory usage and identify potential memory leaks.
+
+4. Use a testing framework like Jest to measure the performance of your unit tests and integration tests.
+
+Consider using a specialized performance testing tool like Apache JMeter or Gatling for load testing your application and identifying its scalability limits.
+
+By analyzing the data collected from these tools, you can identify the areas in your application that need optimization and track the progress of your performance tuning efforts over time.
 
 ---
 
