@@ -41,6 +41,15 @@
   - [Difference between `setState()` and `useState()`](#difference-between-setstate-and-usestate)
   - [Code-snippet demonstrating usage of `setState()`](#code-snippet-demonstrating-usage-of-setstate)
   - [Code-snippet demonstrating usage of `useState()`](#code-snippet-demonstrating-usage-of-usestate)
+- [React Context](#react-context)
+  - [About](#about)
+    - [1. Context Provider](#1-context-provider)
+    - [2. Context Consumer](#2-context-consumer)
+    - [Basic Example](#basic-example)
+  - [Uses](#uses)
+    - [Authentication](#authentication)
+    - [Language or Localization](#language-or-localization)
+    - [Preferences or Settings](#preferences-or-settings)
 - [React Router](#react-router)
   - [Types of Routers](#types-of-routers)
   - [`useParams()` hook (TODO)](#useparams-hook-todo)
@@ -853,6 +862,82 @@ When the button is clicked, the component instance calls the `setCount(count + 1
 > 2. The `useState()` hook can be used multiple times to manage multiple state variables.
 
 Read more about the state setter method returned by the `useState` hook here: https://beta.reactjs.org/reference/react/useState#setstate
+
+---
+
+# React Context
+
+## About
+
+React Context is a feature in React that allows you to share data between components without explicitly passing it through props at every level of the component tree. It provides a way to create a global state that can be accessed by any component within its tree.
+
+React Context consists of two main components:
+
+### 1. Context Provider
+
+The Context Provider is responsible for providing the shared data to all the components that need access to it. It acts as the source of truth for the data. The Provider component is placed at a higher level in the component tree to make the data available to its descendants.
+
+### 2. Context Consumer
+
+The Context Consumer is used by components that want to access the shared data provided by the Context Provider. It allows components to subscribe to the context and access the shared data.
+
+### Basic Example
+
+```jsx
+// Create a new context
+const MyContext = React.createContext();
+
+// Create a provider component
+const MyContextProvider = ({ children }) => {
+  const sharedData = 'Hello from Context!';
+
+  return (
+    <MyContext.Provider value={sharedData}>
+      {children}
+    </MyContext.Provider>
+  );
+};
+
+// Consume the context in a component
+const MyComponent = () => {
+  return (
+    <MyContext.Consumer>
+      {value => <p>{value}</p>}
+    </MyContext.Consumer>
+  );
+};
+
+// Use the context provider in the app
+const App = () => {
+  return (
+    <MyContextProvider>
+      <MyComponent />
+    </MyContextProvider>
+  );
+};
+```
+
+## Uses
+
+React Context can be useful in various real-life situations where you need to manage and share state or data across multiple components without explicitly passing props through the component hierarchy. Here are a few examples:
+
+### Authentication
+
+When building an authentication system, you can use React Context to store the authentication state (e.g., logged in user, authentication token) and provide it to all the components that need access to the authentication information. 
+
+This allows components to easily check the authentication status without passing props from the top-level component.
+
+### Language or Localization
+
+If your application supports multiple languages or requires localization, you can use React Context to provide the selected language or localization data to all the components. 
+
+This allows components to access the language-specific content without explicitly passing the language prop through every intermediate component.
+
+### Preferences or Settings
+
+If your application has user preferences or settings that need to be accessed and modified across different parts of the application, React Context can provide a convenient way to manage and share those preferences. 
+
+Components can access and update the preferences without the need for prop drilling.
 
 ---
 
